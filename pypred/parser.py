@@ -46,7 +46,11 @@ tokens = (
     'FALSE',
     'UNDEFINED',
     'NULL',
-    'EMPTY'
+    'EMPTY',
+    'PLUS',
+    'MINUS',
+    'TIMES',
+    'DIVIDE'
 )
 
 # Regex rules for tokens
@@ -65,6 +69,11 @@ t_RPAREN = r'\)'
 
 t_LBRACK = r'{'
 t_RBRACK = r'}'
+
+t_PLUS = r'\+'
+t_MINUS = r'\-'
+t_TIMES = r'\*'
+t_DIVIDE = r'\/'
 
 # Ignore any comments
 t_ignore_COMMENT = r'\#.*'
@@ -126,6 +135,9 @@ from . import ast
 precedence = (
     ('right', 'AND', 'OR'),
     ('right', 'NOT'),
+    ('left', 'GREATER_THAN', 'LESS_THAN'),
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'TIMES', 'DIVIDE')
 )
 
 def p_expression_binop(p):
@@ -159,6 +171,14 @@ def p_term_comparison(p):
             | factor IS_NOT_EQUALS factor
             | factor IS_EQUALS factor"""
     p[0] = ast.CompareOperator(p[2], p[1], p[3])
+    p[0].set_position(p.lineno(2), compute_column(p.lexer, p.lexpos(2)))
+
+def p_term_math_ops(p):
+    """factor : factor PLUS factor
+              | factor MINUS factor
+              | factor TIMES factor
+              | factor DIVIDE factor"""
+    p[0] = ast.MathOperator(p[2], p[1], p[3])
     p[0].set_position(p.lineno(2), compute_column(p.lexer, p.lexpos(2)))
 
 def p_term_dbl_equals(p):

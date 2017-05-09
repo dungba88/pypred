@@ -24,4 +24,8 @@ factor : NUMBER
        | NULL
        | EMPTY
        | LPAREN expression RPAREN
+       | factor PLUS factor
+       | factor MINUS factor
+       | factor TIMES factor
+       | factor DIVIDE factor
 
