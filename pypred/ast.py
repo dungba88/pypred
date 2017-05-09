@@ -135,13 +135,20 @@ class Node(object):
         "Validates the node"
         return True
 
+    def evaluate_raw(self, pred, document):
+        """
+        Evaluates the AST tree against the document for the
+        given predicate. Returns an object
+        """
+        ctx = EvalContext(pred, document)
+        return self.eval(ctx)
+
     def evaluate(self, pred, document):
         """
         Evaluates the AST tree against the document for the
         given predicate. Returns either True or False
         """
-        ctx = EvalContext(pred, document)
-        return bool(self.eval(ctx))
+        return bool(self.evaluate(pred, document))
 
     def analyze(self, pred, document):
         """
