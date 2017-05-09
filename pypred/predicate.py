@@ -60,8 +60,9 @@ class LiteralResolver(object):
             found = True
             root = document
             for p in parts:
-                if p in root:
-                    root = root[p]
+                value, has_found = self.resolve_single(p, root)
+                if has_found:
+                    root = value
                 else:
                     found = False
                     break
@@ -78,6 +79,16 @@ class LiteralResolver(object):
 
         # Return the undefined node if all else fails
         return ast.Undefined()
+
+    def resolve_single(self, p, root):
+        if isinstance(root, list):
+            return root[int(p)], True
+        if isinstance(root, dict):
+            if p in root:
+                return root[p], True
+        if hasattr(root, p):
+            return getattr(root, p), True
+        return None, False
 
 
 class Predicate(LiteralResolver):
@@ -201,6 +212,12 @@ class Predicate(LiteralResolver):
         if not self.is_valid():
             raise InvalidPredicate
         return self.ast.evaluate(self, document)
+
+    def evaluate_raw(self, document):
+        "Evaluates the predicate against the document. Returns raw value"
+        if not self.is_valid():
+            raise InvalidPredicate
+        return self.ast.evaluate_raw(self, document)
 
     def analyze(self, document):
         """
