@@ -50,8 +50,9 @@ class LiteralResolver(object):
             return identifier[1:-1]
 
         # Check for the identifier in the document
-        if identifier in document:
-            return document[identifier]
+        value, has_found = self.resolve_single(identifier, document)
+        if has_found:
+            return value
 
         # Allow the dot syntax for nested object lookup
         # i.e. req.sdk.version = req["sdk"]["version"]
