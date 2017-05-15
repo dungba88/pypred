@@ -148,7 +148,7 @@ class Node(object):
         Evaluates the AST tree against the document for the
         given predicate. Returns either True or False
         """
-        return bool(self.evaluate(pred, document))
+        return bool(self.evaluate_raw(pred, document))
 
     def analyze(self, pred, document):
         """
